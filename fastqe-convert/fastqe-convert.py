@@ -6,8 +6,7 @@ License     : MIT
 Maintainer  : FASTQE-CONVERT_EMAIL 
 Portability : POSIX
 
-The program reads one or more input FASTA files. For each file it computes a
-variety of statistics, and then prints a summary of the statistics as output.
+The program reads one or more input FASTA files and convets them to emoji.
 '''
 
 from argparse import ArgumentParser
@@ -16,14 +15,14 @@ import sys
 import logging
 import pkg_resources
 from Bio import SeqIO
-
+from fastqe import fastqe_map as emaps
+from pyemojify import emojify 
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
 EXIT_FASTA_FILE_ERROR = 3
 DEFAULT_MIN_LEN = 0
 DEFAULT_VERBOSE = False
-HEADER = 'FILENAME\tNUMSEQ\tTOTAL\tMIN\tAVG\tMAX'
 PROGRAM_NAME = "fastqe-convert"
 
 
@@ -52,15 +51,8 @@ def parse_args():
     Returns Options object with command line argument values as attributes.
     Will exit the program on a command line error.
     '''
-    description = 'Read one or more FASTA files, compute simple stats for each file'
+    description = 'Read one or more FASTA files, and convert them to emoji.😀'
     parser = ArgumentParser(description=description)
-    parser.add_argument(
-        '--minlen',
-        metavar='N',
-        type=int,
-        default=DEFAULT_MIN_LEN,
-        help='Minimum length sequence to include in stats (default {})'.format(
-            DEFAULT_MIN_LEN))
     parser.add_argument('--version',
                         action='version',
                         version='%(prog)s ' + PROGRAM_VERSION)
@@ -68,11 +60,26 @@ def parse_args():
                         metavar='LOG_FILE',
                         type=str,
                         help='record program progress in LOG_FILE')
-    parser.add_argument('fasta_files',
+    subparsers = parser.add_subparsers(help='sub-command help')
+    
+    # FASTA processing
+    parser_fasta = subparsers.add_parser('fasta', help='fasta help')
+    parser_fasta.add_argument(
+        '--minlen',
+        metavar='N',
+        type=int,
+        default=DEFAULT_MIN_LEN,
+        help='Minimum length sequence to include in stats (default {})'.format(
+            DEFAULT_MIN_LEN))
+    parser_fasta.add_argument('fasta_files',
                         nargs='*',
                         metavar='FASTA_FILE',
                         type=str,
                         help='Input FASTA files')
+    parser_fasta.set_defaults(func=convert_fasta)
+
+    #TODO add FASTQ parser and convert both sequence and quality      
+
     return parser.parse_args()
 
 
@@ -174,9 +181,8 @@ class FastaStats(object):
                           max_len])
 
 
-def process_files(options):
-    '''Compute and print FastaStats for each input FASTA file specified on the
-    command line. If no FASTA files are specified on the command line then
+def convert_fasta(options):
+    '''Convert FASTA file to emoji. If no FASTA files are specified on the command line then
     read from the standard input (stdin).
 
     Arguments:
@@ -193,12 +199,23 @@ def process_files(options):
                 exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
             else:
                 with fasta_file:
-                    stats = FastaStats().from_file(fasta_file, options.minlen)
-                    print(stats.pretty(fasta_filename))
+                    #stats = FastaStats().from_file(fasta_file, options.minlen)
+                    for seq in SeqIO.parse(fasta_file, "fasta"):
+                        print(">"+seq.id)
+                        original = seq.seq
+                        bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        print(bioemojify)
     else:
         logging.info("Processing FASTA file from stdin")
-        stats = FastaStats().from_file(sys.stdin, options.minlen)
-        print(stats.pretty("stdin"))
+        #stats = FastaStats().from_file(sys.stdin, options.minlen)
+        print("stdin")
+        for seq in SeqIO.parse(sys.stdin, "fasta"):
+                         print(">"+seq.id)
+                         original = seq.seq
+                         bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         print(bioemojify)
+
+
 
 
 def init_logging(log_filename):
@@ -227,9 +244,7 @@ def main():
     "Orchestrate the execution of the program"
     options = parse_args()
     init_logging(options.log)
-    print(HEADER)
-    process_files(options)
-
+    options.func(options)
 
 # If this script is run from the command line then call the main function.
 if __name__ == '__main__':
