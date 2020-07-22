@@ -1,0 +1,21 @@
+sudo: true
+dist: xenial 
+services:
+  - docker
+language: python 
+python:
+  - "3.5"
+
+before_install:
+  - pip3 install cwltool
+  - docker build -t fastqe-convert .
+
+script:
+  # Both of these same tests, in Docker
+  # Functional tests
+  - docker run --entrypoint /fastqe-convert/.travis/unit-test.sh fastqe-convert
+  # Unit tests
+  - docker run --entrypoint /fastqe-convert/functional_tests/fastqe-convert-test.sh fastqe-convert -p fastqe-convert -d /fastqe-convert/functional_tests/test_data -v
+
+  # CWL definition test
+  - cwltool fastqe-convert.cwl --fasta_file functional_tests/test_data/two_sequence.fasta

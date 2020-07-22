@@ -1,0 +1,4 @@
+# Dependencies, with versions explicitly declared for development and testing
+biopython==1.66
+# Packages that are not dependencies but used for building or testing
+pylint
