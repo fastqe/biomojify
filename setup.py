@@ -11,16 +11,16 @@ and is an ideal starting place for new projects."""
 
 
 setup(
-    name="fastqe-convert",
+    name="biomojify",
     version="0.1.0.0",
     author="FASTQE-CONVERT_AUTHOR",
     author_email="FASTQE-CONVERT_EMAIL",
-    packages=["fastqe_convert"],
-    package_dir={"fastqe_convert": "fastqe_convert"},
+    packages=["biomojify"],
+    package_dir={"biomojify": "biomojify"},
     entry_points={
-        "console_scripts": ["fastqe-convert = fastqe_convert.fastqe_convert:main"]
+        "console_scripts": ["biomojify = biomojify.biomojify:main"]
     },
-    url="https://github.com/GITHUB_USERNAME/fastqe-convert",
+    url="https://github.com/GITHUB_USERNAME/biomojify",
     license="LICENSE",
     description=("A prototypical bioinformatics command line tool"),
     long_description=(LONG_DESCRIPTION),

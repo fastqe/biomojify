@@ -11,7 +11,7 @@
 #set -x
 
 # The name of this test script
-this_program_name="fastqe-convert-test.sh"
+this_program_name="biomojify-test.sh"
 # The program we want to test (either a full path to an executable, or the name of an executable in $PATH)
 test_program=""
 # Directory containing the test data files and expected outputs
@@ -24,13 +24,13 @@ num_tests=0
 function show_help {
 cat << UsageMessage
 
-${this_program_name}: run integration/regression tests for fastqe-convert 
+${this_program_name}: run integration/regression tests for biomojify 
 
 Usage:
     ${this_program_name} [-h] [-v] -p program -d test_data_dir 
 
 Example:
-    ${this_program_name} -p bin/fastqe-convert -d data/tests
+    ${this_program_name} -p bin/biomojify -d data/tests
 
 -h shows this help message
 

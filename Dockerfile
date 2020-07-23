@@ -1,5 +1,5 @@
 FROM python:3.7.3-stretch
-WORKDIR /fastqe-convert
+WORKDIR /biomojify
 COPY . .
 
 # Install the python package (and executable)

@@ -1,13 +1,13 @@
 '''
-Unit tests for fastqe-convert.
+Unit tests for biomojify.
 
-Usage: python -m unittest -v fastqe-convert_test
+Usage: python -m unittest -v biomojify_test
 '''
 
 import unittest
 from io import StringIO
 #pylint: disable=no-name-in-module
-from fastqe-convert import FastaStats
+from biomojify import FastaStats
 
 class TestFastaStats(unittest.TestCase):
     '''Unit tests for FastaStats'''

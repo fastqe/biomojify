@@ -1,9 +1,9 @@
 #!/usr/bin/env cwl-runner
 
-baseCommand: [fastqe-convert]
+baseCommand: [biomojify]
 class: CommandLineTool
 cwlVersion: v1.0
-id: fastqe-convert
+id: biomojify
 inputs:
   - doc: Input FASTA files
     id: fasta_file
@@ -23,4 +23,4 @@ outputs:
     type: stdout
 requirements:
   - class: DockerRequirement
-    dockerPull: fastqe-convert
+    dockerPull: biomojify
