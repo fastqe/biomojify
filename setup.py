@@ -20,7 +20,7 @@ setup(
     entry_points={
         "console_scripts": ["biomojify = biomojify.biomojify:main"]
     },
-    url="https://github.com/GITHUB_USERNAME/biomojify",
+    url="https://github.com/fastqe/biomojify",
     license="LICENSE",
     description=("A prototypical bioinformatics command line tool"),
     long_description=(LONG_DESCRIPTION),
