@@ -17,6 +17,7 @@ import pkg_resources
 from Bio import SeqIO
 from fastqe import fastqe_map as emaps
 from pyemojify import emojify 
+from Bio.SeqIO import QualityIO
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
@@ -24,6 +25,19 @@ EXIT_FASTA_FILE_ERROR = 3
 DEFAULT_MIN_LEN = 0
 DEFAULT_VERBOSE = False
 PROGRAM_NAME = "biomojify"
+
+# #PyCharm testing command line processing
+# sys.argv = [
+#     __file__,
+# #    '--bin',
+# #    '--long','3000',
+# # #   '--output', 'testouput.txt',
+#     'fastq',
+#     '../functional_tests/test_data/test.fastq',
+# #    'test/test.fastq',
+# #    'test/test_wiki.fq',
+# ]
+
 
 
 try:
@@ -79,6 +93,22 @@ def parse_args():
     parser_fasta.set_defaults(func=convert_fasta)
 
     #TODO add FASTQ parser and convert both sequence and quality      
+    # FASTQ processing
+    parser_fastq = subparsers.add_parser('fastq', help='fastq help')
+    parser_fastq.add_argument(
+        '--minlen',
+        metavar='N',
+        type=int,
+        default=DEFAULT_MIN_LEN,
+        help='Minimum length sequence to convert (default {})'.format(
+            DEFAULT_MIN_LEN))
+    parser_fastq.add_argument('fastq_files',
+                              nargs='*',
+                              metavar='FASTQ_FILE',
+                              type=str,
+                              help='Input FASTQ files')
+    parser_fastq.set_defaults(func=convert_fastq)
+
 
     return parser.parse_args()
 
@@ -214,6 +244,44 @@ def convert_fasta(options):
                          original = seq.seq
                          bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                          print(bioemojify)
+
+def convert_fastq(options):
+    '''Convert FASTQ file to emoji. If no FASTQ files are specified on the command line then
+    read from the standard input (stdin).
+
+    Arguments:
+       options: the command line options of the program
+    Result:
+       None
+    '''
+    if options.fastq_files:
+        for fastq_filename in options.fastq_files:
+            logging.info("Processing FASTA file from %s", fastq_filename)
+            try:
+                fastq_file = open(fastq_filename)
+            except IOError as exception:
+                exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
+            else:
+                with fastq_file:
+                    for seq in SeqIO.parse(fastq_file, "fastq"):
+                        print(emojify(":arrow_forward:")+"  "+seq.id)
+                        #print(">"+seq.id)
+                        original = seq.seq
+                        bioemojify = "".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        original_qual = QualityIO._get_sanger_quality_str(seq)
+                        bioemojify_qual = "".join([emojify(emaps.fastq_emoji_map.get(s,":heart_eyes:")) for s in original_qual])
+                        print(bioemojify+"\n"+bioemojify_qual)
+#                        print(*zip([a for a in bioemojify if a != " "],[b for b in bioemojify_qual if b != " "]))
+    else:
+        logging.info("Processing FASTA file from stdin")
+        #stats = FastaStats().from_file(sys.stdin, options.minlen)
+        print("stdin")
+        for seq in SeqIO.parse(sys.stdin, "fasta"):
+                         print(">"+seq.id)
+                         original = seq.seq
+                         bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         print(bioemojify)
+
 
 
 
