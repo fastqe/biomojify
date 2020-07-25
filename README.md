@@ -1,4 +1,4 @@
-[![travis](https://travis-ci.org/GITHUB_USERNAME/biomojify.svg?branch=master)](https://travis-ci.org/GITHUB_USERNAME/biomojify)
+[![travis](https://travis-ci.org/fastqe/biomojify.svg?branch=master)](https://travis-ci.org/fastqe/biomojify)
 
 # Overview 
 
@@ -8,7 +8,7 @@ In the examples below, `$` indicates the command line prompt.
 
 # Licence
 
-This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/GITHUB_USERNAME/biomojify/master/LICENSE).
+This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/fastqe/biomojify/master/LICENSE).
 
 # Installing
 
@@ -18,7 +18,7 @@ You can install biomojify directly from the source code or build and run it from
 
 Clone this repository: 
 ```
-$ git clone https://github.com/GITHUB_USERNAME/biomojify
+$ git clone https://github.com/fastqe/biomojify
 ```
 
 Move into the repository directory:
@@ -277,4 +277,4 @@ $ cwltool biomojify.cwl --fasta_file file.fasta
 
 Please submit bug reports and feature requests to the issue tracker on GitHub:
 
-[biomojify issue tracker](https://github.com/GITHUB_USERNAME/biomojify/issues)
+[biomojify issue tracker](https://github.com/fastqe/biomojify/issues)
