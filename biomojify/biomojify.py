@@ -38,6 +38,14 @@ PROGRAM_NAME = "biomojify"
 # #    'test/test_wiki.fq',
 # ]
 
+local_seq_emoji_map = {
+    'A': '🥑',  # avocado not in pyemojify, trying a failthrough which works for the noemoji mode
+    'C': ':corn:',
+    'T': ':tomato:',
+    'G': ':grapes:',
+    'N': ':question:'
+}
+
 
 
 try:
@@ -233,7 +241,7 @@ def convert_fasta(options):
                     for seq in SeqIO.parse(fasta_file, "fasta"):
                         print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                         print(bioemojify)
     else:
         logging.info("Processing FASTA file from stdin")
@@ -242,7 +250,7 @@ def convert_fasta(options):
         for seq in SeqIO.parse(sys.stdin, "fasta"):
                          print(">"+seq.id)
                          original = seq.seq
-                         bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                          print(bioemojify)
 
 def convert_fastq(options):
@@ -267,7 +275,7 @@ def convert_fastq(options):
                         print(emojify(":arrow_forward:")+"  "+seq.id)
                         #print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = "".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                         original_qual = QualityIO._get_sanger_quality_str(seq)
                         bioemojify_qual = "".join([emojify(emaps.fastq_emoji_map.get(s,":heart_eyes:")) for s in original_qual])
                         print(bioemojify+"\n"+bioemojify_qual)
@@ -279,7 +287,7 @@ def convert_fastq(options):
         for seq in SeqIO.parse(sys.stdin, "fasta"):
                          print(">"+seq.id)
                          original = seq.seq
-                         bioemojify = " ".join([emojify(emaps.seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                          print(bioemojify)
 
 
