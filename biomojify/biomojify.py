@@ -348,7 +348,7 @@ def main():
     try:
         options.func(options)
     except:
-        parse_args(error=TRUE)
+        parse_args(error=True)
 # If this script is run from the command line then call the main function.
 if __name__ == '__main__':
     main()
