@@ -201,3 +201,7 @@ $ cwltool biomojify.cwl --fasta_file file.fasta
 Please submit bug reports and feature requests to the issue tracker on GitHub:
 
 [biomojify issue tracker](https://github.com/fastqe/biomojify/issues)
+
+
+We are also on Gitter along with `fastqe`: https://gitter.im/fastqe/community#
+
