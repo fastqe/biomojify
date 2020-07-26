@@ -239,18 +239,20 @@ def convert_fasta(options):
                 with fasta_file:
                     #stats = FastaStats().from_file(fasta_file, options.minlen)
                     for seq in SeqIO.parse(fasta_file, "fasta"):
-                        print(">"+seq.id)
+                        print(emojify(":arrow_forward:") + " " + seq.id)
+                        #print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                         print(bioemojify)
     else:
         logging.info("Processing FASTA file from stdin")
         #stats = FastaStats().from_file(sys.stdin, options.minlen)
         print("stdin")
         for seq in SeqIO.parse(sys.stdin, "fasta"):
-                         print(">"+seq.id)
+                         print(emojify(":arrow_forward:") + " " + seq.id)
+                         #print(">"+seq.id)
                          original = seq.seq
-                         bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
                          print(bioemojify)
 
 def convert_fastq(options):
