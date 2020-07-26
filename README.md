@@ -31,6 +31,25 @@ $ biomojify fasta test.fasta
 
 ```
 
+
+## FASTQ files
+
+For a FASTQ file, both sequence and quality information are converted to emoji:
+
+```
+$ cat test.fq
+@ Sequence
+GTGCCAGCCGCCGCGGTAGTCCGACGTGGC
++
+GGGGGGGGGGGGGGGGGGGGGG!@#$%&%(
+```
+```
+$ biomojify fastq test.fq
+▶️  Sequence
+🍇🍅🍇🌽🌽🥑🍇🌽🌽🍇🌽🌽🍇🌽🍇🍇🍅🥑🍇🍅🌽🌽🍇🥑🌽🍇🍅🍇🍇🌽
+😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁🚫😄👺💔🙅👾🙅💀
+```
+
 # Licence
 
 This program is released as open source software under the terms of [BSD License](https://raw.githubusercontent.com/fastqe/biomojify/master/LICENSE).
