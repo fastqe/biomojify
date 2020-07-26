@@ -18,6 +18,7 @@ from Bio import SeqIO
 from fastqe import fastqe_map as emaps
 from pyemojify import emojify 
 from Bio.SeqIO import QualityIO
+import binascii
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
@@ -232,7 +233,11 @@ def convert_fasta(options):
         for fasta_filename in options.fasta_files:
             logging.info("Processing FASTA file from %s", fasta_filename)
             try:
-                fasta_file = open(fasta_filename)
+                if fasta_filename.endswith(".gz"):
+                    fasta_file = gzip.open(fasta_filename, 'rt')
+                else:
+                    fasta_file = open(fasta_filename)
+
             except IOError as exception:
                 exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
             else:
@@ -247,8 +252,12 @@ def convert_fasta(options):
     else:
         logging.info("Processing FASTA file from stdin")
         #stats = FastaStats().from_file(sys.stdin, options.minlen)
-        print("stdin")
-        for seq in SeqIO.parse(sys.stdin, "fasta"):
+        if (binascii.hexlify(sys.stdin.buffer.peek(1)[:2]) == b'1f8b'):
+            # print("zipped")
+            stdin_file = gzip.open(sys.stdin.buffer, 'rt')
+        else:
+            stdin_file = sys.stdin
+        for seq in SeqIO.parse(stdin_file, "fasta"):
                          print(emojify(":arrow_forward:") + " " + seq.id)
                          #print(">"+seq.id)
                          original = seq.seq
@@ -268,7 +277,11 @@ def convert_fastq(options):
         for fastq_filename in options.fastq_files:
             logging.info("Processing FASTA file from %s", fastq_filename)
             try:
-                fastq_file = open(fastq_filename)
+                if fastq_filename.endswith(".gz"):
+                    fastq_file = gzip.open(fastq_filename, 'rt')
+                else:
+                    fastq_file = open(fastq_filename)
+
             except IOError as exception:
                 exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
             else:
@@ -285,8 +298,13 @@ def convert_fastq(options):
     else:
         logging.info("Processing FASTA file from stdin")
         #stats = FastaStats().from_file(sys.stdin, options.minlen)
-        print("stdin")
-        for seq in SeqIO.parse(sys.stdin, "fasta"):
+        if (binascii.hexlify(sys.stdin.buffer.peek(1)[:2]) == b'1f8b'):
+            # print("zipped")
+            stdin_file = gzip.open(sys.stdin.buffer, 'rt')
+        else:
+            stdin_file = sys.stdin
+
+        for seq in SeqIO.parse(stdin_file, "fasta"):
                          print(">"+seq.id)
                          original = seq.seq
                          bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
