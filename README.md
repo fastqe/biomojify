@@ -2,13 +2,38 @@
 
 # Overview 
 
-This program reads one or more input FASTA files, and converts them to emoji.
+This program reads one or more input FASTA or FASTQ files, and converts them to emoji.
 
 In the examples below, `$` indicates the command line prompt.
 
+## FASTA files
+For a DNA sequence: 
+```
+$ cat test.fasta 
+>SEQUENCE_1
+ATAGTCAGTACGTAGTCGATGCTAGCTAGTAGGGGGGCTGATGATGTAGCTCGATCGTACGTACGTACGCTGAGTCAGTG
+CACGTACGCTGCATGCCNTAGNCTAAAAGNCTANGCTAGCNTANGCTGACTNAGNTGACTGCNTCGTCGNATCATGTACG
+TAGCGAGCTTTTTTTAGTGTACGTAGTACTACCCCCCCCCGTACGTACGTACGTCACGTGCTGACTNNNACGATCGTAGT
+AGCTGACTGATGCT
+```
+
+`biomojify` will convert the ATCG to 🥑🍅🌽🍇:
+
+```
+$ biomojify fasta test.fasta 
+▶️ SEQUENCE_1
+🥑🍅🥑🍇🍅🌽🥑🍇🍅🥑🌽🍇🍅🥑🍇🍅🌽🍇🥑🍅🍇🌽🍅🥑🍇🌽🍅🥑🍇🍅🥑🍇🍇🍇🍇🍇🍇🌽🍅🍇🥑🍅🍇🥑🍅🍇🍅🥑🍇
+🌽🍅🌽🍇🥑🍅🌽🍇🍅🥑🌽🍇🍅🥑🌽🍇🍅🥑🌽🍇🌽🍅🍇🥑🍇🍅🌽🥑🍇🍅🍇🌽🥑🌽🍇🍅🥑🌽🍇🌽🍅🍇🌽🥑🍅🍇🌽🌽❓
+🍅🥑🍇❓🌽🍅🥑🥑🥑🥑🍇❓🌽🍅🥑❓🍇🌽🍅🥑🍇🌽❓🍅🥑❓🍇🌽🍅🍇🥑🌽🍅❓🥑🍇❓🍅🍇🥑🌽🍅🍇🌽❓🍅🌽🍇🍅
+🌽🍇❓🥑🍅🌽🥑🍅🍇🍅🥑🌽🍇🍅🥑🍇🌽🍇🥑🍇🌽🍅🍅🍅🍅🍅🍅🍅🥑🍇🍅🍇🍅🥑🌽🍇🍅🥑🍇🍅🥑🌽🍅🥑🌽🌽🌽🌽🌽
+🌽🌽🌽🌽🍇🍅🥑🌽🍇🍅🥑🌽🍇🍅🥑🌽🍇🍅🌽🥑🌽🍇🍅🍇🌽🍅🍇🥑🌽🍅❓❓❓🥑🌽🍇🥑🍅🌽🍇🍅🥑🍇🍅🥑🍇🌽🍅🍇
+🥑🌽🍅🍇🥑🍅🍇🌽🍅
+
+```
+
 # Licence
 
-This program is released as open source software under the terms of [MIT License](https://raw.githubusercontent.com/fastqe/biomojify/master/LICENSE).
+This program is released as open source software under the terms of [BSD License](https://raw.githubusercontent.com/fastqe/biomojify/master/LICENSE).
 
 # Installing
 
@@ -46,105 +71,28 @@ $ pip install -U --user /path/to/biomojify
 ```
 
 
-## Building the Docker container 
-
-The file `Dockerfile` contains instructions for building a Docker container for biomojify.
-
-If you have Docker installed on your computer you can build the container like so:
-```
-$ docker build -t biomojify .
-```
-See below for information about running biomojify within the Docker container.
-
-# General behaviour
-
-Fastqe-convert accepts zero or more FASTA filenames on the command line. If zero filenames are specified it reads a single FASTA file from the standard input device (stdin). Otherwise it reads each named FASTA file in the order specified on the command line. Fastqe-convert reads each input FASTA file, computes various statistics about the contents of the file, and then displays a tab-delimited summary of the statistics as output. Each input file produces at most one output line of statistics. Each line of output is prefixed by the input filename or by the text "`stdin`" if the standard input device was used.
-
-Fastqe-convert processes each FASTA file one sequence at a time. Therefore the memory usage is proportional to the longest sequence in the file.
-
-An optional command line argument `--minlen` can be supplied. Sequences with length strictly less than the given value will be ignored by biomojify and do not contribute to the computed statistics. By default `--minlen` is set to zero.
-
-These are the statistics computed by biomojify, for all sequences with length greater-than-or-equal-to `--minlen`:
-
-* *NUMSEQ*: the number of sequences in the file satisfying the minimum length requirement.
-* *TOTAL*: the total length of all the counted sequences.
-* *MIN*: the minimum length of the counted sequences.
-* *AVERAGE*: the average length of the counted sequences rounded down to an integer.
-* *MAX*: the maximum length of the counted sequences.
-
-If there are zero sequences counted in a file, the values of MIN, AVERAGE and MAX cannot be computed. In that case biomojify will print a dash (`-`) in the place of the numerical value. Note that when `--minlen` is set to a value greater than zero it is possible that an input FASTA file does not contain any sequences with length greater-than-or-equal-to the specified value. If this situation arises biomojify acts in the same way as if there are no sequences in the file.
-
 ## Help message
 
-Fastqe-convert can display usage information on the command line via the `-h` or `--help` argument:
+`biomojify` can display usage information on the command line via the `-h` or `--help` argument:
+
 
 ```
-$ biomojify -h
-usage: biomojify [-h] [--minlen N] [--version] [--log LOG_FILE]
-                  [FASTA_FILE [FASTA_FILE ...]]
+$ biomojify --help
+usage: biomojify [-h] [--version] [--log LOG_FILE] {fasta,fastq} ...
 
-Print fasta stats
+Read one or more FASTA files, and convert them to emoji.😀
 
 positional arguments:
-  FASTA_FILE      Input FASTA files
+  {fasta,fastq}   sub-command help
+    fasta         fasta help
+    fastq         fastq help
 
 optional arguments:
   -h, --help      show this help message and exit
-  --minlen N      Minimum length sequence to include in stats (default 0)
   --version       show program's version number and exit
   --log LOG_FILE  record program progress in LOG_FILE
 ```
 
-## Reading FASTA files named on the command line
-
-Fastqe-convert accepts zero or more named FASTA files on the command line. These must be specified following all other command line arguments. If zero files are named, biomojify will read a single FASTA file from the standard input device (stdin).
-
-There are no restrictions on the name of the FASTA files. Often FASTA filenames end in `.fa` or `.fasta`, but that is merely a convention, which is not enforced by biomojify. 
-
-The example below illustrates biomojify applied to a single named FASTA file called `file1.fa`:
-```
-$ biomojify file1.fa
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-file1.fa	5264	3801855	31	722	53540
-```
-
-The example below illustrates biomojify applied to three FASTA files called `file1.fa`, `file2.fa` and `file3.fa`:
-```
-$ biomojify file1.fa file2.fa file3.fa
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-file1.fa	5264	3801855	31	722	53540
-file2.fa	1245	982374	8	393	928402
-file3.fa	64	8376	102	123	212	
-```
-
-## Reading a single FASTA file from standard input 
-
-The example below illustrates biomojify reading a FASTA file from standard input. In this example we have redirected the contents of a file called `file1.fa` into the standard input using the shell redirection operator `<`:
-
-```
-$ biomojify < file1.fa
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-stdin	5264	3801855	31	722	53540
-```
-
-Equivalently, you could achieve the same result by piping a FASTA file into biomojify:
-
-```
-$ cat file1.fa | biomojify
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-stdin	5264	3801855	31	722	53540
-```
-
-## Filtering sequences by length 
-
-Fastqe-convert provides an optional command line argument `--minlen` which causes it to ignore (not count) any sequences in the input FASTA files with length strictly less than the supplied value. 
-
-The example below illustrates biomojify applied to a single FASTA file called `file`.fa` with a `--minlen` filter of 1000.
-```
-$ biomojify --minlen 1000 file.fa
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-file1.fa	4711	2801855	1021	929	53540
-```
 
 ## Logging
 
@@ -162,20 +110,9 @@ $ cat bt.log
 ```
 
 
-## Empty files
-
-It is possible that the input FASTA file contains zero sequences, or, when the `--minlen` command line argument is used, it is possible that the file contains no sequences of length greater-than-or-equal-to the supplied value. In both of those cases biomojify will not be able to compute minimum, maximum or average sequence lengths, and instead it shows output in the following way:
-
-The example below illustrates biomojify applied to a single FASTA file called `empty.fa` which contains zero sequences:
-```
-$ biomojify empty.fa
-FILENAME	NUMSEQ	TOTAL	MIN	AVG	MAX
-empty.fa	0	0	-	-	-
-```
-
 ## Exit status values
 
-Fastqe-convert returns the following exit status values:
+`biomojify` returns the following exit status values:
 
 * 0: The program completed successfully.
 * 1: File I/O error. This can occur if at least one of the input FASTA files cannot be opened for reading. This can occur because the file does not exist at the specified path, or biomojify does not have permission to read from the file. 
@@ -225,41 +162,8 @@ As above, you will also need to replace `DATA` with the absolite path to the dir
 
 ## Unit tests
 
-You can run the unit tests for biomojify with the following commands:
-```
-$ cd biomojify/python/biomojify
-$ python -m unittest -v biomojify_test
-```
-
 ## Test suite
 
-Sample test input files are provided in the `functional_tests/test_data` folder.
-```
-$ cd functional_tests/test_data
-$ biomojify two_sequence.fasta
-FILENAME        TOTAL   NUMSEQ  MIN     AVG     MAX
-two_sequence.fasta      2       357     120     178     237
-```
-
-Automated tests can be run using the `functional_tests/biomojify-test.sh` script like so:
-
-```
-$ cd functional_tests
-$ ./biomojify-test.sh -p biomojify -d test_data
-```
-
-The `-p` argument specifies the name of the program to test, the `-d` argument specifies the path of the directory containing test data.
-The script will print the number of passed and failed test cases. More detailed information about each test case can be obtained
-by requesting "verbose" output with the `-d` flag:
-
-```
-$ ./biomojify-test.sh -p biomojify -d test_data -v
-```
-
-The test script can also be run inside the Docker container:
-```
-$ docker run biomojify /biomojify/functional_tests/biomojify-test.sh -p biomojify -d /biomojify/functional_tests/test_data -v
-```
 
 # Common Workflow Language (CWL) wrapper
 
