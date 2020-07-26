@@ -301,7 +301,7 @@ def convert_fastq(options):
                         print(bioemojify+"\n"+bioemojify_qual)
 #                        print(*zip([a for a in bioemojify if a != " "],[b for b in bioemojify_qual if b != " "]))
     else:
-        logging.info("Processing FASTA file from stdin")
+        logging.info("Processing FASTQ file from stdin")
         #stats = FastaStats().from_file(sys.stdin, options.minlen)
         if (binascii.hexlify(sys.stdin.buffer.peek(1)[:2]) == b'1f8b'):
             # print("zipped")
@@ -310,10 +310,13 @@ def convert_fastq(options):
             stdin_file = sys.stdin
 
         for seq in SeqIO.parse(stdin_file, "fastq"):
-                         print(">"+seq.id)
-                         original = seq.seq
-                         bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
-                         print(bioemojify)
+                        print(emojify(":arrow_forward:")+"  "+seq.id)
+                        #print(">"+seq.id)
+                        original = seq.seq
+                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        original_qual = QualityIO._get_sanger_quality_str(seq)
+                        bioemojify_qual = "".join([emojify(emaps.fastq_emoji_map.get(s,":heart_eyes:")) for s in original_qual])
+                        print(bioemojify+"\n"+bioemojify_qual)
 
 
 
