@@ -1,9 +1,9 @@
 '''
 Module      : Main
 Description : The main entry point for the program.
-Copyright   : (c) FASTQE-CONVERT_AUTHOR, 22 Jul 2020 
-License     : MIT 
-Maintainer  : FASTQE-CONVERT_EMAIL 
+Copyright   : (c) Andrew Lonsdale, 22 Jul 2020 
+License     : BSD 
+Maintainer  : Andrew Lonsdale
 Portability : POSIX
 
 The program reads one or more input FASTA files and convets them to emoji.
