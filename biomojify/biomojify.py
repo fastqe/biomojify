@@ -19,6 +19,8 @@ from fastqe import fastqe_map as emaps
 from pyemojify import emojify 
 from Bio.SeqIO import QualityIO
 import binascii
+import gzip
+
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
@@ -69,7 +71,7 @@ def exit_with_error(message, exit_status):
     sys.exit(exit_status)
 
 
-def parse_args():
+def parse_args(error=False):
     '''Parse command line arguments.
     Returns Options object with command line argument values as attributes.
     Will exit the program on a command line error.
@@ -118,8 +120,11 @@ def parse_args():
                               help='Input FASTQ files')
     parser_fastq.set_defaults(func=convert_fastq)
 
-
-    return parser.parse_args()
+    if(error):
+        parser.print_help()
+        return
+    else:
+        return parser.parse_args()
 
 
 class FastaStats(object):
@@ -340,8 +345,11 @@ def main():
     "Orchestrate the execution of the program"
     options = parse_args()
     init_logging(options.log)
-    options.func(options)
-
+    try:
+        options.func(options)
+    except:
+...     parser.print_help()
+...     exit()
 # If this script is run from the command line then call the main function.
 if __name__ == '__main__':
     main()
