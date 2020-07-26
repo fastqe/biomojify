@@ -309,7 +309,7 @@ def convert_fastq(options):
         else:
             stdin_file = sys.stdin
 
-        for seq in SeqIO.parse(stdin_file, "fasta"):
+        for seq in SeqIO.parse(stdin_file, "fastq"):
                          print(">"+seq.id)
                          original = seq.seq
                          bioemojify = " ".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
