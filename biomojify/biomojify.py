@@ -73,7 +73,7 @@ def parse_args():
     Returns Options object with command line argument values as attributes.
     Will exit the program on a command line error.
     '''
-    description = 'Read one or more FASTA files, and convert them to emoji.😀'
+    description = 'Read one or more FASTA or FASTQ files, and convert them to emoji.😀'
     parser = ArgumentParser(description=description)
     parser.add_argument('--version',
                         action='version',
