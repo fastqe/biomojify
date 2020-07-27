@@ -1,8 +1,6 @@
-[![travis](https://travis-ci.org/fastqe/biomojify.svg?branch=master)](https://travis-ci.org/fastqe/biomojify)
-
 # Overview 
 
-This program reads one or more input FASTA or FASTQ files, and converts them to emoji.
+`biomojify` reads one or more input FASTA or FASTQ files, and converts them to emoji.
 
 In the examples below, `$` indicates the command line prompt.
 
@@ -49,6 +47,10 @@ $ biomojify fastq test.fq
 🍇🍅🍇🌽🌽🥑🍇🌽🌽🍇🌽🌽🍇🌽🍇🍇🍅🥑🍇🍅🌽🌽🍇🥑🌽🍇🍅🍇🍇🌽
 😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁🚫😄👺💔🙅👾🙅💀
 ```
+
+# Contributors
+
+`biomojify` extends the ideas and work in `fastqe` and shares many of the same cotnributors: https://github.com/fastqe/fastqe#contributors
 
 # Licence
 
@@ -195,6 +197,8 @@ You can test the wrapper using the `cwltool` workflow runner, which is provided 
 ```
 $ cwltool biomojify.cwl --fasta_file file.fasta 
 ```
+
+
 
 # Bug reporting and feature requests
 
