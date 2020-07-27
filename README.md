@@ -2,8 +2,6 @@
 
 `biomojify` reads one or more input FASTA or FASTQ files, and converts them to emoji.
 
-In the examples below, `$` indicates the command line prompt.
-
 ## FASTA files
 For a DNA sequence: 
 ```
