@@ -7,7 +7,7 @@ Usage: python -m unittest -v biomojify_test
 import unittest
 from io import StringIO
 #pylint: disable=no-name-in-module
-from biomojify import FastaStats
+from biomojify.biomojify import FastaStats
 
 class TestFastaStats(unittest.TestCase):
     '''Unit tests for FastaStats'''
