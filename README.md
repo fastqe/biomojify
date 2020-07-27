@@ -26,7 +26,7 @@ $ biomojify fasta test.fasta
 🥑🌽🍅🍇🥑🍅🍇🌽🍅
 
 ```
-
+Protein sequences and custom emoji dictionaries are also supported.
 
 ## FASTQ files
 
@@ -46,9 +46,12 @@ $ biomojify fastq test.fq
 😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁😁🚫😄👺💔🙅👾🙅💀
 ```
 
+Binned quality scores, and custom emoji dictionaries for either sequence or quality are also supported.
+
+
 # Contributors
 
-`biomojify` extends the ideas and work in `fastqe` and shares many of the same cotnributors: https://github.com/fastqe/fastqe#contributors
+`biomojify` extends the ideas and work in `fastqe` and shares many of the same contributors: https://github.com/fastqe/fastqe#contributors
 
 # Licence
 
@@ -56,7 +59,12 @@ This program is released as open source software under the terms of [BSD License
 
 # Installing
 
-You can install biomojify directly from the source code or build and run it from within Docker container.
+You can install biomojify via `pip`, directly from the source code or build and run it from within Docker container.
+
+
+## Pip
+
+`pip install biomojify`
 
 ## Installing directly from source code
 
@@ -183,21 +191,6 @@ As above, you will also need to replace `DATA` with the absolite path to the dir
 ## Unit tests
 
 ## Test suite
-
-
-# Common Workflow Language (CWL) wrapper
-
-The [Common Workflow Language (CWL)](https://www.commonwl.org/) specifies a portable mechanism for running software tools and workflows across many different platforms.
-We provide an example CWL wrapper for biomojify in the file `biomojify.cwl`. It invokes biomojify using the Docker container (described above). This wrapper allows you
-to easily incorporate biomojify into CWL workflows, and can be executed by any CWL-supporting workflow engine.
-
-You can test the wrapper using the `cwltool` workflow runner, which is provided by the CWL project (see the CWL documentation for how to install this on your computer).
-
-```
-$ cwltool biomojify.cwl --fasta_file file.fasta 
-```
-
-
 
 # Bug reporting and feature requests
 
