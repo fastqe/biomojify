@@ -110,7 +110,7 @@ def parse_args(error=False):
     parser_fasta.set_defaults(func=convert_fasta)
 
     # FASTA protein processing
-    parser_fasta_protein = subparsers.add_parser('fasta_protein', help='fasta protein help')
+    parser_fasta_protein = subparsers.add_parser('fasta_protein', help='fasta_protein help')
     parser_fasta_protein.add_argument(
         '--minlen',
         metavar='N',

@@ -102,9 +102,10 @@ usage: biomojify [-h] [--version] [--log LOG_FILE] {fasta,fastq} ...
 Read one or more FASTA files, and convert them to emoji.😀
 
 positional arguments:
-  {fasta,fastq}   sub-command help
-    fasta         fasta help
-    fastq         fastq help
+  {fasta,fasta_protein,fastq}   sub-command help
+    fasta                fasta help
+    fasta_protein        fasta_protein help
+    fastq                fastq help
 
 optional arguments:
   -h, --help      show this help message and exit
