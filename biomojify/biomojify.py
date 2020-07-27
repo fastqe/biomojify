@@ -419,7 +419,11 @@ def main():
     init_logging(options.log)
     try:
         options.func(options)
-    except:
+    except Exception as e:
+        s = str(e)
+        print("\n\n")
+        print(s)
+        print("\n\n")
         parse_args(error=True)
 # If this script is run from the command line then call the main function.
 if __name__ == '__main__':
