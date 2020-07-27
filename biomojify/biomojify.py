@@ -20,7 +20,8 @@ from pyemojify import emojify
 from Bio.SeqIO import QualityIO
 import binascii
 import gzip
-
+from . import biomojify_map
+import ast
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
@@ -86,7 +87,7 @@ def parse_args(error=False):
                         type=str,
                         help='record program progress in LOG_FILE')
     subparsers = parser.add_subparsers(help='sub-command help')
-    
+
     # FASTA processing
     parser_fasta = subparsers.add_parser('fasta', help='fasta help')
     parser_fasta.add_argument(
@@ -96,12 +97,38 @@ def parse_args(error=False):
         default=DEFAULT_MIN_LEN,
         help='Minimum length sequence to include in stats (default {})'.format(
             DEFAULT_MIN_LEN))
+    parser_fasta.add_argument('--custom',
+                              metavar='CUSTOM_DICT',
+                              type=str,
+                              help='use a mapping of custom emoji to nucleotides in CUSTOM_DICT (' + emojify(":yellow_heart:") + emojify(
+                                  ":blue_heart:") + ')')
     parser_fasta.add_argument('fasta_files',
-                        nargs='*',
-                        metavar='FASTA_FILE',
-                        type=str,
-                        help='Input FASTA files')
+                              nargs='*',
+                              metavar='FASTA_FILE',
+                              type=str,
+                              help='Input FASTA files')
     parser_fasta.set_defaults(func=convert_fasta)
+
+    # FASTA protein processing
+    parser_fasta_protein = subparsers.add_parser('fasta_protein', help='fasta protein help')
+    parser_fasta_protein.add_argument(
+        '--minlen',
+        metavar='N',
+        type=int,
+        default=DEFAULT_MIN_LEN,
+        help='Minimum length sequence to include in stats (default {})'.format(
+            DEFAULT_MIN_LEN))
+    parser_fasta_protein.add_argument('--custom',
+                              metavar='CUSTOM_DICT',
+                              type=str,
+                              help='use a mapping of custom emoji to proteins in CUSTOM_DICT (' + emojify(":yellow_heart:") + emojify(
+                                  ":blue_heart:") + ')')
+    parser_fasta_protein.add_argument('fasta_files',
+                              nargs='*',
+                              metavar='FASTA_FILE',
+                              type=str,
+                              help='Input FASTA files')
+    parser_fasta_protein.set_defaults(func=convert_fasta_protein)
 
     #TODO add FASTQ parser and convert both sequence and quality      
     # FASTQ processing
@@ -113,6 +140,21 @@ def parse_args(error=False):
         default=DEFAULT_MIN_LEN,
         help='Minimum length sequence to convert (default {})'.format(
             DEFAULT_MIN_LEN))
+    parser_fastq.add_argument('--bin',
+                        action='store_true',
+                        help='use binned scores (' + emojify(":no_entry_sign:") + emojify(":skull:")
+                             + emojify(":poop:") + emojify(":warning:") + " " + emojify(":smile:") + emojify(
+                            ":laughing:") + emojify(":sunglasses:") + emojify(":heart_eyes:") + ")")
+    parser_fastq.add_argument('--custom',
+                              metavar='CUSTOM_DICT',
+                              type=str,
+                              help='use a mapping of custom emoji to nucleotides in CUSTOM_DICT (' + emojify(":yellow_heart:") + emojify(
+                                  ":blue_heart:") + ')')
+    parser_fastq.add_argument('--custom_qual',
+                              metavar='CUSTOM_DICT',
+                              type=str,
+                              help='use a mapping of custom emoji to quality scores in CUSTOM_DICT (' + emojify(":moneybag:") + emojify(
+                                  ":snake:") + ')')
     parser_fastq.add_argument('fastq_files',
                               nargs='*',
                               metavar='FASTQ_FILE',
@@ -225,7 +267,12 @@ class FastaStats(object):
                           max_len])
 
 
-def convert_fasta(options):
+def convert_fasta_protein(options):
+        convert_fasta(options, mapping_dict=biomojify_map.prot_seq_emoji_map)
+
+        return
+
+def convert_fasta(options, mapping_dict=local_seq_emoji_map):
     '''Convert FASTA file to emoji. If no FASTA files are specified on the command line then
     read from the standard input (stdin).
 
@@ -234,6 +281,13 @@ def convert_fasta(options):
     Result:
        None
     '''
+
+    if options.custom:
+        with open(options.custom) as f:
+            mapping_dict_use =ast.literal_eval(f.read())
+    else:
+        mapping_dict_use=mapping_dict
+
     if options.fasta_files:
         for fasta_filename in options.fasta_files:
             logging.info("Processing FASTA file from %s", fasta_filename)
@@ -252,7 +306,7 @@ def convert_fasta(options):
                         print(emojify(":arrow_forward:") + " " + seq.id)
                         #print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
                         print(bioemojify)
     else:
         logging.info("Processing FASTA file from stdin")
@@ -266,7 +320,7 @@ def convert_fasta(options):
                          print(emojify(":arrow_forward:") + " " + seq.id)
                          #print(">"+seq.id)
                          original = seq.seq
-                         bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                         bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
                          print(bioemojify)
 
 def convert_fastq(options):
@@ -278,6 +332,21 @@ def convert_fastq(options):
     Result:
        None
     '''
+
+    if options.custom:
+        with open(options.custom) as f:
+            mapping_dict_use = ast.literal_eval(f.read())
+    else:
+        mapping_dict_use = local_seq_emoji_map
+
+    if options.custom_qual:
+        with open(options.custom_qual) as f:
+            mapping_dict_qual_use = ast.literal_eval(f.read())
+    elif options.bin:
+        mapping_dict_qual_use = emaps.fastq_emoji_map_binned
+    else:
+        mapping_dict_qual_use = emaps.fastq_emoji_map
+
     if options.fastq_files:
         for fastq_filename in options.fastq_files:
             logging.info("Processing FASTA file from %s", fastq_filename)
@@ -295,9 +364,9 @@ def convert_fastq(options):
                         print(emojify(":arrow_forward:")+"  "+seq.id)
                         #print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
                         original_qual = QualityIO._get_sanger_quality_str(seq)
-                        bioemojify_qual = "".join([emojify(emaps.fastq_emoji_map.get(s,":heart_eyes:")) for s in original_qual])
+                        bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s,":heart_eyes:")) for s in original_qual])
                         print(bioemojify+"\n"+bioemojify_qual)
 #                        print(*zip([a for a in bioemojify if a != " "],[b for b in bioemojify_qual if b != " "]))
     else:
@@ -313,9 +382,9 @@ def convert_fastq(options):
                         print(emojify(":arrow_forward:")+"  "+seq.id)
                         #print(">"+seq.id)
                         original = seq.seq
-                        bioemojify = "".join([emojify(local_seq_emoji_map.get(s,":heart_eyes:")) for s in original])
+                        bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
                         original_qual = QualityIO._get_sanger_quality_str(seq)
-                        bioemojify_qual = "".join([emojify(emaps.fastq_emoji_map.get(s,":heart_eyes:")) for s in original_qual])
+                        bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s,":heart_eyes:")) for s in original_qual])
                         print(bioemojify+"\n"+bioemojify_qual)
 
 
