@@ -59,7 +59,7 @@ This program is released as open source software under the terms of [BSD License
 
 # Installing
 
-You can install biomojify via `pip`, directly from the source code or build and run it from within Docker container.
+You can install biomojify via `pip`, directly from the source code or build and run it from within Docker container (experimental).
 
 
 ## Pip
@@ -170,18 +170,18 @@ $ docker run -i biomojify biomojify --version
 
 Read from a single input FASTA file redirected from standard input:
 ```
-$ docker run -i biomojify biomojify < file.FASTA 
+$ docker run -i biomojify biomojify fasta < file.FASTA 
 ```
 
 Read from multuple input FASTA files named on the command line, where all the files are in the same directory. You must replace `DATA` with the absolute file path of the directory containing the FASTA files:  
 ```
-$ docker run -i -v DATA:/in biomojify biomojify /in/file1.fasta /in/file2.fasta /in/file3.fasta
+$ docker run -i -v DATA:/in biomojify biomojify fasta /in/file1.fasta /in/file2.fasta /in/file3.fasta
 ```
 The argument `DATA:/in` maps the directory called DATA on your local machine into the `/in` directory within the Docker container.
 
 Logging progress to a file in the directory OUT: 
 ```
-$ docker run -i -v DATA:/in -v OUT:/out biomojify-c biomojify --log /out/logfile.txt /in/file1.fasta /in/file2.fasta /in/file3.fasta
+$ docker run -i -v DATA:/in -v OUT:/out biomojify biomojify fasta --log /out/logfile.txt /in/file1.fasta /in/file2.fasta /in/file3.fasta
 ```
 Replace `OUT` with the absolute path of the directory to write the log file. For example, if you want the log file written to the current working directory, replace `OUT` with `$PWD`.
 As above, you will also need to replace `DATA` with the absolite path to the directory containing your input FASTA files.
