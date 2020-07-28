@@ -22,6 +22,11 @@ import binascii
 import gzip
 from . import biomojify_map
 import ast
+import vcf
+from Bio.SeqRecord import SeqRecord
+from Bio.Seq import Seq
+
+
 
 EXIT_FILE_IO_ERROR = 1
 EXIT_COMMAND_LINE_ERROR = 2
@@ -89,7 +94,7 @@ def parse_args(error=False):
     subparsers = parser.add_subparsers(help='sub-command help')
 
     # FASTA processing
-    parser_fasta = subparsers.add_parser('fasta', help='fasta help')
+    parser_fasta = subparsers.add_parser('fasta', help='fasta --help')
     parser_fasta.add_argument(
         '--minlen',
         metavar='N',
@@ -110,7 +115,7 @@ def parse_args(error=False):
     parser_fasta.set_defaults(func=convert_fasta)
 
     # FASTA protein processing
-    parser_fasta_protein = subparsers.add_parser('fasta_protein', help='fasta_protein help')
+    parser_fasta_protein = subparsers.add_parser('fasta_protein', help='fasta_protein --help')
     parser_fasta_protein.add_argument(
         '--minlen',
         metavar='N',
@@ -132,7 +137,7 @@ def parse_args(error=False):
 
     #TODO add FASTQ parser and convert both sequence and quality      
     # FASTQ processing
-    parser_fastq = subparsers.add_parser('fastq', help='fastq help')
+    parser_fastq = subparsers.add_parser('fastq', help='fastq --help')
     parser_fastq.add_argument(
         '--minlen',
         metavar='N',
@@ -161,6 +166,46 @@ def parse_args(error=False):
                               type=str,
                               help='Input FASTQ files')
     parser_fastq.set_defaults(func=convert_fastq)
+    
+    
+   
+
+    # file  processing template
+    parser_vcf = subparsers.add_parser('vcf', help='vcf --help')
+    parser_vcf.add_argument('vcf_files',
+                              nargs='*',
+                              metavar='VCF_FILE',
+                              type=str,
+                              help='(experimental) Input VCF files')
+    parser_vcf.set_defaults(func=convert_vcf)
+
+
+
+    
+    # 
+    # # file  processing template
+    # parser_filetype = subparsers.add_parser('filetype', help='filetype help')
+    # parser_filetype.add_argument(
+    #     '--minlen',
+    #     metavar='N',
+    #     type=int,
+    #     default=DEFAULT_MIN_LEN,
+    #     help='Minimum length sequence to include in stats (default {})'.format(
+    #         DEFAULT_MIN_LEN))
+    # parser_filetype.add_argument('--custom',
+    #                           metavar='CUSTOM_DICT',
+    #                           type=str,
+    #                           help='use a mapping of custom emoji to proteins in CUSTOM_DICT (' + emojify(":yellow_heart:") + emojify(
+    #                               ":blue_heart:") + ')')
+    # parser_filetype.add_argument('fasta_files',
+    #                           nargs='*',
+    #                           metavar='FASTA_FILE',
+    #                           type=str,
+    #                           help='Input FASTA files')
+    # parser_filetype.set_defaults(func=convert_filetype)
+
+
+
 
     if(error):
         parser.print_help()
@@ -267,10 +312,105 @@ class FastaStats(object):
                           max_len])
 
 
-def convert_fasta_protein(options):
-        convert_fasta(options, mapping_dict=biomojify_map.prot_seq_emoji_map)
 
-        return
+def convert_vcf(options):
+    '''Convert VCF file to emoji ''' 
+    print("\t".join(["CHROM","POS","ID","REF","ALT","QUAL","FILTER"]))
+    if options.vcf_files:
+        for vcf_filename in options.vcf_files:
+            logging.info("Processing VCF file from %s", vcf_filename)
+            try:
+                if vcf_filename.endswith(".gz"):
+                    vcf_file = gzip.open(vcf_filename, 'rt')
+                else:
+                    vcf_file = open(vcf_filename)
+
+            except IOError as exception:
+                exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
+            else:
+                with vcf_file:
+                    for record in vcf.Reader(vcf_file):
+                        print("\t".join([str(a) for a in [record.CHROM,
+                                                          record.POS,
+                                                          record.ID,
+                                                          "".join([a for a in map(get_vcf_emoji, record.REF)]),
+                                                          ",".join([get_vcf_emoji(str(rec)) for rec in record.ALT]),
+                                                          get_vcf_qual(record.QUAL),
+                                                          get_vcf_filter(record.FILTER),
+                                                         # record.INFO,
+                                                         # record.FORMAT,
+                                                         # record.samples
+                                                          ]]))
+    else:
+        logging.info("Processing vcf file from stdin")
+        if (binascii.hexlify(sys.stdin.buffer.peek(1)[:2]) == b'1f8b'):
+            # print("zipped")
+            stdin_file = gzip.open(sys.stdin.buffer, 'rt')
+        else:
+            stdin_file = sys.stdin
+        with stdin_file as vcf_file:
+            for record in vcf.Reader(vcf_file):
+                print("\t".join([str(a) for a in [record.CHROM,
+                                                  record.POS,
+                                                  record.ID,
+                                                  "".join([a for a in map(get_vcf_emoji, record.REF)]),
+                                                  ",".join([get_vcf_emoji(str(rec)) for rec in record.ALT]),
+                                                  get_vcf_qual(record.QUAL),
+                                                  get_vcf_filter(record.FILTER),
+                                                  # record.INFO,
+                                                  # record.FORMAT,
+                                                  # record.samples
+                                                  ]]))
+
+
+def get_vcf_emoji(orig_c, map_dict=local_seq_emoji_map, default=":heart_eyes:"):
+     if (orig_c == "None"):
+        return(emojify((":x:")))
+     #print("orig:",orig_c,"\n")
+     return "".join([emojify(map_dict.get(e, ":heart_eyes:")) for e in orig_c])
+
+def get_vcf_qual(quality):
+    '''Map a quality value to an emoji'''
+
+    # Hack to do this quickly - use same trick as FASTQE and convert from value to a PHRED encoding then map
+    #TODO make this better
+    #
+    if quality == None:
+        bioemojify_qual = emojify(":question:")
+    else:
+        fake_seq = 'N'
+        record_qual = SeqRecord(Seq(fake_seq), id="test", name="lookup",
+                                description="example",
+                                letter_annotations={'phred_quality': [int(quality)]})
+        mapping_dict_qual_use = emaps.fastq_emoji_map_binned
+        original_qual = QualityIO._get_sanger_quality_str(record_qual)
+        #print(original_qual)
+        bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s, ":heart_eyes:")) for s in original_qual])
+
+    return(bioemojify_qual)
+
+def get_vcf_filter(filter_val):
+
+   filt_emoji = ""
+   if filter_val == None:
+       filt_emoji = emojify(":question:")
+   elif filter_val == []:
+       filt_emoji = emojify(":thumbsup:")
+   else:
+       filt_emoji = emojify(":thumbsdown:")+":"+ str(",".join(filter_val))
+
+   return(filt_emoji)
+
+# 
+# def convert_filetype(options):
+#     return
+
+
+def convert_fasta_protein(options):
+    convert_fasta(options, mapping_dict=biomojify_map.prot_seq_emoji_map)
+
+    return
+
 
 def convert_fasta(options, mapping_dict=local_seq_emoji_map):
     '''Convert FASTA file to emoji. If no FASTA files are specified on the command line then
