@@ -65,7 +65,77 @@ Binned quality scores, and custom emoji dictionaries for either sequence or qual
 😎😎😎😎😎😆😆😆😎⚠️😆😎😎😆😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😎😆😆😎😎😎😎😎😎😎😆😄😆😎😎😎💩
 ```
 
-# Contributors
+
+
+## VCF files
+
+Converting VCF files is in early development:
+
+```
+$biomojify vcf test.vcf
+CHROM  POS      ID         REF       ALT          QUAL  FILTER
+20     14370    rs6054257  🍇        🥑           😄    👍
+20     17330    None       🍅        🥑           💀    👎:q10
+20     1110696  rs6040355  🥑        🍇,🍅        😍    👍
+20     1230237  None       🍅        ❌             😍    👍
+20     1234567  microsat1  🍇🍅🌽    🍇,🍇🍅🌽🍅  😍    👍
+Z      99999    deletion   🍅🍅🍅🍅  ❌             ❓      ❓
+```
+
+## Help message
+
+`biomojify` can display usage information on the command line via the `-h` or `--help` argument:
+
+
+```
+$ biomojify --help
+usage: biomojify [-h] [--version] [--log LOG_FILE] {fasta,fastq} ...
+
+Read one or more FASTA files, and convert them to emoji.😀
+
+positional arguments:
+  {fasta,fasta_protein,fastq,vcf}
+                        sub-command help
+    fasta               fasta --help
+    fasta_protein       fasta_protein --help
+    fastq               fastq --help
+    vcf                 vcf --help
+
+optional arguments:
+  -h, --help      show this help message and exit
+  --version       show program's version number and exit
+  --log LOG_FILE  record program progress in LOG_FILE
+```
+
+
+# Development
+
+## New file formats
+
+To add a new file format to `biomojify`, create a fork on GitHub with the name of the format you wish to to add, and
+submt a pull request with a subparser: 
+```
+parser_filetype = subparsers.add_parser('filetype', help='filetype help')
+parser_filetype.add_argument('filetype_files',
+                           nargs='*',
+                           metavar='FILETYPE_FILE',
+                           type=str,
+                           help='Input FILETYPE files')
+parser_filetype.set_defaults(func=convert_filetype)
+```
+
+and with a function name that refers to a new function you create that will process that file type:
+
+```
+def convert_filetype(options):
+
+    for file in options.filetype_files:
+        # print emoji format 
+```
+
+That's it! 
+
+## Contributors
 
 `biomojify` extends the ideas and work in `fastqe` and shares many of the same contributors: https://github.com/fastqe/fastqe#contributors
 
@@ -113,29 +183,6 @@ $ pip install -U /path/to/biomojify
 $ pip install -U --user /path/to/biomojify
 ```
 
-
-## Help message
-
-`biomojify` can display usage information on the command line via the `-h` or `--help` argument:
-
-
-```
-$ biomojify --help
-usage: biomojify [-h] [--version] [--log LOG_FILE] {fasta,fastq} ...
-
-Read one or more FASTA files, and convert them to emoji.😀
-
-positional arguments:
-  {fasta,fasta_protein,fastq}   sub-command help
-    fasta                fasta help
-    fasta_protein        fasta_protein help
-    fastq                fastq help
-
-optional arguments:
-  -h, --help      show this help message and exit
-  --version       show program's version number and exit
-  --log LOG_FILE  record program progress in LOG_FILE
-```
 
 
 ## Logging

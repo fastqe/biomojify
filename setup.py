@@ -19,5 +19,5 @@ setup(
     license="LICENSE",
     description=("Convert FASTQ and FASTA files to emoji."),
     long_description=(LONG_DESCRIPTION),
-    install_requires=["biopython","fastqe"],
+    install_requires=["biopython","fastqe","pyvcf"],
 )
