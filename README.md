@@ -1,6 +1,6 @@
 # Overview 
 
-`biomojify` reads one or more input FASTA or FASTQ files, and converts them to emoji.
+`biomojify` reads one or more input FASTA, FASTQ, or VCF (experimental) files, and converts them to emoji.
 
 ## FASTA files
 For a DNA sequence: 
