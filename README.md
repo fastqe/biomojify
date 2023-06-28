@@ -1,6 +1,6 @@
 # Overview 
 
-`biomojify` reads one or more input FASTA or FASTQ files, and converts them to emoji.
+`biomojify` reads one or more input FASTA, FASTQ, or VCF (experimental) files, and converts them to emoji.
 
 ## FASTA files
 For a DNA sequence: 
@@ -74,12 +74,13 @@ Converting VCF files is in early development:
 ```
 $biomojify vcf test.vcf
 CHROM  POS      ID         REF       ALT          QUAL  FILTER
-20     14370    rs6054257  🍇        🥑           😄    👍
-20     17330    None       🍅        🥑           💀    👎:q10
-20     1110696  rs6040355  🥑        🍇,🍅        😍    👍
+20     14370    rs6054257  🍇        🥑             😄    👍
+20     17330    None       🍅        🥑             💀    👎:q10
+20     1110696  rs6040355  🥑        🍇,🍅          😍    👍
 20     1230237  None       🍅        ❌             😍    👍
-20     1234567  microsat1  🍇🍅🌽    🍇,🍇🍅🌽🍅  😍    👍
-Z      99999    deletion   🍅🍅🍅🍅  ❌             ❓      ❓
+20     1234567  microsat1  🍇🍅🌽     🍇,🍇🍅🌽🍅     😍    👍
+Z      99999    deletion   🍅🍅🍅🍅   ❌             ❓    ❓
+
 ```
 
 ## Help message
