@@ -7,7 +7,7 @@ LONG_DESCRIPTION = """The program reads one or more input FASTA or FASTQ files a
 
 setup(
     name="biomojify",
-    version="0.2.0.0",
+    version="0.2.1.0",
     author="Andrew Lonsdale",
     author_email="andrew.lonsdale@lonsbio.com.au",
     packages=["biomojify"],
@@ -19,5 +19,5 @@ setup(
     license="LICENSE",
     description=("Convert FASTQ and FASTA files to emoji."),
     long_description=(LONG_DESCRIPTION),
-    install_requires=["biopython","fastqe","pyvcf"],
+    install_requires=["biopython","fastqe","PyVCF3"],
 )

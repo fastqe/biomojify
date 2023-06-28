@@ -20,7 +20,7 @@ from pyemojify import emojify
 from Bio.SeqIO import QualityIO
 import binascii
 import gzip
-from . import biomojify_map
+# from . import biomojify_map
 import ast
 import vcf
 from Bio.SeqRecord import SeqRecord
@@ -54,6 +54,40 @@ local_seq_emoji_map = {
     'G': ':grapes:',
     'N': ':question:'
 }
+
+# only suitable for english speakers
+prot_seq_emoji_map = {
+    'A': ':green_apple:',
+    'B': ':banana:',
+    'C': ':cherries:',
+    'D': ':doughnut:',
+    'E': ':elephant:',
+    'F': ':fries:',
+    'G': ':grapes:',
+    'H': ':hamburger:',
+    'I': ':icecream:',
+    'J': ':jeans:',
+    'K': ':key:',
+    'L': ':lemon:',
+    'M': ':mushroom:',
+    'N': ':nose:',
+    'O': ':octopus:',
+    'P': ':pineapple:',
+    'Q': ':princess:',
+    'R': ':rabbit:',
+    'S': ':strawberry:',
+    'T': ':tomato:',
+    'U': ':umbrella:',
+    'V': ':volcano:',
+    'W': ':watermelon:',
+    'X': ':x:',
+    'Y': ':sailboat:',
+    '*': ':hand:',
+    '-': ':wavy_dash:',
+}
+
+prot_scale = "ABCDEFGHIJKLMNOPQRSTUVWXY*-"
+
 
 
 
@@ -407,7 +441,7 @@ def get_vcf_filter(filter_val):
 
 
 def convert_fasta_protein(options):
-    convert_fasta(options, mapping_dict=biomojify_map.prot_seq_emoji_map)
+    convert_fasta(options, mapping_dict=prot_seq_emoji_map)
 
     return
 
