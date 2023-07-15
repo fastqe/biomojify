@@ -586,7 +586,7 @@ def init_logging(log_filename):
         logging.info('program started')
         logging.info('command line: %s', ' '.join(sys.argv))
 
-def run_biomojify(files,func="convert_fastq",subparser_name="fastq",minlen=0,version=False,log=None,bin=False,custom=None, custom_qual=None):
+def run_biomojify(files,func=convert_fastq,subparser_name="fastq",minlen=0,version=False,log=None,bin=False,custom=None, custom_qual=None):
     options = Namespace(fastq_files=files,func=func, subparser_name=subparser_name,bin=bin, version=version,custom=custom,custom_qual=custom_qual,log=log, minlen=minlen)
     if options.version:
         print(PROGRAM_NAME,PROGRAM_VERSION)
