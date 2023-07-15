@@ -9,7 +9,7 @@ Portability : POSIX
 The program reads one or more input FASTA files and convets them to emoji.
 '''
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from math import floor
 import sys
 import logging
@@ -125,7 +125,7 @@ def parse_args(error=False):
                         metavar='LOG_FILE',
                         type=str,
                         help='record program progress in LOG_FILE')
-    subparsers = parser.add_subparsers(help='sub-command help')
+    subparsers = parser.add_subparsers(help='sub-command help',dest='subparser_name')
 
     # FASTA processing
     parser_fasta = subparsers.add_parser('fasta', help='fasta --help')
@@ -586,6 +586,15 @@ def init_logging(log_filename):
         logging.info('program started')
         logging.info('command line: %s', ' '.join(sys.argv))
 
+def run_biomojify(fastq_files,minlen=0,scale=False,version=False,
+               mean = True,custom=None,noemoji=False,min=False,max=False,
+               output=None,long=None,log=None,bin=False,html=False,html_escape=False,noheader=False, window=1):
+    options = Namespace(fastq_files=fastq_files, bin=bin, custom=custom,log=log, long=long, max=max, mean=mean, min=min, minlen=minlen, noemoji=noemoji, output=output, scale=scale, version=version,html=html,html_escape=html_escape,noheader=noheader, window=window)
+    if options.version:
+        print(PROGRAM_NAME,PROGRAM_VERSION)
+        return
+    options.func(options)
+                   
 
 def main():
     "Orchestrate the execution of the program"
