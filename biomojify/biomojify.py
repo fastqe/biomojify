@@ -175,6 +175,7 @@ def parse_args(error=False):
     parser_fastq.add_argument('--head',
                               metavar='H',
                               type=int,
+                              default=0,
                               help='Convert the first H number of sequences')
     parser_fastq.add_argument(
         '--minlen',
@@ -540,7 +541,7 @@ def convert_fastq(options):
                 with fastq_file:
                     seq_count=0
                     for seq in SeqIO.parse(fastq_file, "fastq"):
-                        if seq_count <= options.head:
+                        if  options.head != 0 and seq_count <= options.head:
                             print(emojify(":arrow_forward:")+"  "+seq.id)
                             #print(">"+seq.id)
                             original = seq.seq
@@ -600,8 +601,8 @@ def init_logging(log_filename):
         logging.info('program started')
         logging.info('command line: %s', ' '.join(sys.argv))
 
-def run_biomojify(files,func=convert_fastq,subparser_name="fastq",minlen=0,version=False,log=None,bin=False,custom=None, custom_qual=None):
-    options = Namespace(fastq_files=files,func=func, subparser_name=subparser_name,bin=bin, version=version,custom=custom,custom_qual=custom_qual,log=log, minlen=minlen)
+def run_biomojify(files,func=convert_fastq,subparser_name="fastq",minlen=0,head=0,version=False,log=None,bin=False,custom=None, custom_qual=None):
+    options = Namespace(fastq_files=files,func=func,head=head, subparser_name=subparser_name,bin=bin, version=version,custom=custom,custom_qual=custom_qual,log=log, minlen=minlen)
     if options.version:
         print(PROGRAM_NAME,PROGRAM_VERSION)
         return
