@@ -172,6 +172,10 @@ def parse_args(error=False):
     #TODO add FASTQ parser and convert both sequence and quality      
     # FASTQ processing
     parser_fastq = subparsers.add_parser('fastq', help='fastq --help')
+    parser_fastq.add_argument('--head',
+                              metavar='H',
+                              type=int,
+                              help='Convert the first H number of sequences')
     parser_fastq.add_argument(
         '--minlen',
         metavar='N',
@@ -534,15 +538,20 @@ def convert_fastq(options):
                 exit_with_error(str(exception), EXIT_FILE_IO_ERROR)
             else:
                 with fastq_file:
+                    seq_count=0
                     for seq in SeqIO.parse(fastq_file, "fastq"):
-                        print(emojify(":arrow_forward:")+"  "+seq.id)
-                        #print(">"+seq.id)
-                        original = seq.seq
-                        bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
-                        original_qual = QualityIO._get_sanger_quality_str(seq)
-                        bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s,":heart_eyes:")) for s in original_qual])
-                        print(bioemojify+"\n"+bioemojify_qual)
-#                        print(*zip([a for a in bioemojify if a != " "],[b for b in bioemojify_qual if b != " "]))
+                        if seq_count <= options.head:
+                            print(emojify(":arrow_forward:")+"  "+seq.id)
+                            #print(">"+seq.id)
+                            original = seq.seq
+                            bioemojify = "".join([emojify(mapping_dict_use.get(s,":heart_eyes:")) for s in original])
+                            original_qual = QualityIO._get_sanger_quality_str(seq)
+                            bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s,":heart_eyes:")) for s in original_qual])
+                            print(bioemojify+"\n"+bioemojify_qual)
+    #                        print(*zip([a for a in bioemojify if a != " "],[b for b in bioemojify_qual if b != " "]))
+                            seq_count += 1
+                        else:
+                            break
     else:
         logging.info("Processing FASTQ file from stdin")
         #stats = FastaStats().from_file(sys.stdin, options.minlen)
@@ -553,6 +562,8 @@ def convert_fastq(options):
             stdin_file = sys.stdin
 
         for seq in SeqIO.parse(stdin_file, "fastq"):
+            seq_count=0
+            if seq_count <= options.head:
                         print(emojify(":arrow_forward:")+"  "+seq.id)
                         #print(">"+seq.id)
                         original = seq.seq
@@ -560,6 +571,9 @@ def convert_fastq(options):
                         original_qual = QualityIO._get_sanger_quality_str(seq)
                         bioemojify_qual = "".join([emojify(mapping_dict_qual_use.get(s,":heart_eyes:")) for s in original_qual])
                         print(bioemojify+"\n"+bioemojify_qual)
+                        seq_count += 1
+            else:
+                break
 
 
 
